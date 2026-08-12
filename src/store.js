@@ -1,32 +1,54 @@
 export const initialStore=()=>{
+    const favoritosGuardados = localStorage.getItem('favoritos')
+
   return{
-    message: null,
-    todos: [
-      {
-        id: 1,
-        title: "Make the bed",
-        background: null,
-      },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
-      }
-    ]
+    personas: [],
+    vehiculos: [],
+    planetas: [],
+    favoritos: favoritosGuardados? JSON.parse(favoritosGuardados) :[],
+    cargando: false,
+    error: null,
   }
 }
 
 export default function storeReducer(store, action = {}) {
   switch(action.type){
-    case 'add_task':
 
-      const { id,  color } = action.payload
-
+    case 'set_personas':
       return {
         ...store,
-        todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
+        personas: action.payload
       };
+
+    case 'set_vehiculos':
+      return {
+        ...store,
+        vehiculos: action.payload
+      };
+
+    case 'set_planetas':
+      return {
+        ...store,
+        planetas: action.payload
+      };
+
+    case 'agregar_favorito':
+      const nuevosFavoritos = [...store.favoritos, action.payload];
+      localStorage.setItem('favoritos', JSON.stringify(nuevosFavoritos))
+      return {
+        ...store,
+        favoritos: nuevosFavoritos
+      };
+
+    case 'eliminar_favorito':
+      const favoritosFiltrados = store.favoritos.filter(fav => fav.id !== action.payload);
+      localStorage.setItem('favoritos', JSON.stringify(favoritosFiltrados))
+      return {
+        ...store,
+        favoritos: favoritosFiltrados
+      };
+
     default:
-      throw Error('Unknown action.');
-  }    
+      throw Error('Unknown action.')
+  }
 }
